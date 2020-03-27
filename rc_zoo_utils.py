@@ -2,8 +2,134 @@ import json
 import os
 import csv
 import gzip
+import jsonlines
 
 from utils import DataProcessor, RCExample
+
+
+class NaturalQuestionsProcessor(DataProcessor):
+
+
+    def get_all_examples(self, data_dir):
+        examples = []
+        question_list, passage_list, answer_list, instance_list = [], [], [], []
+
+        # read dev file
+        input_file = "{}v1.0-simplified%2Fnq-dev-all.jsonl.gz".format(data_dir)
+        with gzip.open(input_file) as f:
+            for line in f:
+                entry = json.loads(line)
+                question = entry["question_text"]
+                context_tokens = []
+                answer_tokens = []
+                tokens = entry["document_tokens"]
+
+                for token in tokens:
+                    if token["html_token"]:
+                        continue
+                    context_tokens.append(token["token"])
+                passage = " ".join(context_tokens)
+                answer = []
+                for annotation in entry["annotations"]:
+
+                    if annotation["yes_no_answer"] != "NONE":
+                        answer = [annotation["yes_no_answer"]]
+                        # print(answer)
+                        # print(annotation)
+                    else:
+                        if len(annotation["short_answers"]) == 0:
+                            long_answer_raw = annotation["long_answer"]
+                            if long_answer_raw["candidate_index"] == -1:
+                                continue
+                           # print(annotation)
+                            answer_start = long_answer_raw["start_token"]
+                            answer_end = long_answer_raw["end_token"]
+                            i = 0
+                            for token in tokens:
+                                if token["html_token"]:
+                                    i += 1
+                                    continue
+                                if i >= answer_start and i < answer_end:
+                                    answer_tokens.append(token["token"])
+                                i += 1
+                            answer.append(" ".join(answer_tokens))
+                        else:
+                            for answer_raw in annotation["short_answers"]:
+                                answer_start = answer_raw["start_token"]
+                                answer_end = answer_raw["end_token"]
+                                i = 0
+                                for token in tokens:
+                                    if token["html_token"]:
+                                        i+=1
+                                        continue
+                                    if i >= answer_start and i < answer_end:
+                                        answer_tokens.append(token["token"])
+                                    i += 1
+                                answer.append(" ".join(answer_tokens))
+
+                question_list.append(question)
+                passage_list.append(passage)
+                answer_list+=answer
+
+                # print(question)
+                # print(passage)
+                # print(answer_raw)
+                # print(answer)
+                # break
+
+        print("DEV complite")
+        # train reading
+        input_file = "{}v1.0-simplified%2Fsimplified-nq-train.jsonl.gz".format(data_dir)
+        with gzip.open(input_file) as f:
+            for line in f:
+                entry = json.loads(line)
+                question = entry["question_text"]
+                answer_tokens = []
+                tokens = entry["document_text"].split()
+                annotation = entry["annotations"][0]
+                answer = []
+                if annotation["yes_no_answer"] != "NONE":
+                    answer = [annotation["yes_no_answer"]]
+                    #print(answer)
+
+                else:
+                    if len(annotation["short_answers"]) == 0:
+                        answer_start = annotation["long_answer"]["start_token"]
+                        answer_end = annotation["long_answer"]["end_token"]
+                        for i in range(0, len(tokens)):
+                            if i >= answer_start and i < answer_end:
+                                answer_tokens.append(tokens[i])
+                        answer.append(" ".join(answer_tokens))
+                    else:
+                        for answer_raw in annotation["short_answers"]:
+                            answer_start = answer_raw["start_token"]
+                            answer_end = answer_raw["end_token"]
+                            for i in range(0, len(tokens)):
+                                if i >= answer_start and i < answer_end:
+                                    answer_tokens.append(tokens[i])
+                            answer.append(" ".join(answer_tokens))
+
+                passage = entry["document_text"]
+
+                question_list.append(question)
+                passage_list.append(passage)
+                answer_list+=answer
+
+                # print(question)
+                # print(passage)
+                # print(answer_raw)
+                # print(answer)
+                #
+                # print(entry["annotations"])
+                # break
+
+
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "answers": answer_list}
 
 
 
@@ -13,7 +139,7 @@ class AmazonQAProcessor(DataProcessor):
 
         #questions and answers
         train_data = self._read_questions_examples(data_dir, "train")
-        dev_data   = self._read_questions_examples(data_dir,  "dev")
+        dev_data   = self._read_questions_examples(data_dir,  "val")
 
         examples = train_data["examples"] + dev_data["examples"]
 
@@ -22,7 +148,8 @@ class AmazonQAProcessor(DataProcessor):
         passage_list  = train_data["passages"]  + dev_data["passages"]
         instance_list = set(train_data["instances"] + dev_data["instances"])
 
-        return {"examples": examples,
+        return {"examples": [],
+                #"examples": examples,
                 "questions": question_list,
                 "passages": passage_list,
                 "instances": instance_list,
@@ -32,39 +159,43 @@ class AmazonQAProcessor(DataProcessor):
     def _read_questions_examples(self, folder, set):
         """Creates examples for the training and dev sets."""
 
-        input_file = "{}{}-qar.jsonl".format(folder, set)
-        with open(input_file, "r", encoding='utf-8') as reader:
-            input_data = json.load(reader)
-
         examples = []
         question_list, passage_list, answer_list, instance_list, candidates_list = [], [], [], [], []
-        for entry in input_data:
-            asin = entry["asin"]
-            qas_id = entry["id"]
-            question = entry["questionText"]
-            passage = " ".join(entry["review_snippets"])
-            answer = []
-            for answer_entity in entry["answer"]:
-                answer.append(answer_entity["answerText"])
+
+        input_file = "{}{}-qar.jsonl".format(folder, set)
+        with jsonlines.open(input_file, "r") as reader:
+            #input_data = json.load(reader)
+
+            for entry in reader.iter():
+            #for entry in input_data:
+                asin = entry["asin"]
+                qas_id = entry["qid"]
+                question = entry["questionText"]
+                passage = " ".join(entry["review_snippets"])
+                answer = []
+                for answer_entity in entry["answers"]:
+                    answer.append(answer_entity["answerText"])
 
 
-            answer_list+=(answer)
-            question_list.append(question)
-            passage_list.append(passage)
+                answer_list+=(answer)
+                question_list.append(question)
+                passage_list.append(passage)
+                instance_list.append(asin)
 
-            example = RCExample(
-                guid=qas_id,
-                passage=passage,
-                question=question,
-                answer=answer,
-                instance=asin,
-            )
-            examples.append(example)
-            print(example)
-            break
+                # example = RCExample(
+                #     guid="_".join([set, str(qas_id)]),
+                #     passage=passage,
+                #     question=question,
+                #     answer=answer,
+                #     instance=asin,
+                # )
+                # examples.append(example)
+                # print(example)
+                # break
 
 
-        return {"examples": examples,
+        return {"examples": [],
+                #"examples": examples,
                 "questions": question_list,
                 "passages": passage_list,
                 "instances": instance_list,
@@ -100,7 +231,8 @@ class QuasarProcessor(DataProcessor):
         question_list, passage_list, answer_list, instance_list = [], [], [], []
 
 
-        context_input_file = "{}contexts/short/{}_contexts.json.gz".format(folder, set)
+        #context_input_file = "{}contexts/short/{}_contexts.json.gz".format(folder, set)
+        context_input_file = "{}contexts/long/{}_contexts.json.gz".format(folder, set)
         passage_dict = {}
         with gzip.open(context_input_file) as f:
             for entry in f:
@@ -919,5 +1051,6 @@ processors = {
     "quasars": QuasarProcessor,
     "quasart": QuasarProcessor,
     "amazonqa": AmazonQAProcessor,
+    "naturalquestions": NaturalQuestionsProcessor,
 }
 

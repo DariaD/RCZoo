@@ -1,5 +1,6 @@
 
 import argparse
+import re
 
 from parameters import datapaths
 from rc_zoo_utils import processors
@@ -14,15 +15,20 @@ def get_data(text_list):
     vocabulary = set()
     for text in text_list:
         #print(text)
-        tokens = tokenizer(text)
+        try:
+            tokens = tokenizer(text)
+            vocabulary.update({x.lemma_ for x in tokens})
+        except UnicodeEncodeError:
+            tokens = text.split()
         s = s + len(tokens)
-        vocabulary.update({x.lemma_ for x in tokens})
+        #vocabulary.update({x.lemma_ for x in tokens})
     avg_tokens = s/len(text_list)
     return "{:.1f}".format(avg_tokens), vocabulary
 
 
 
 def main():
+    # print(get_data(["just text", "text with \ude03"]))
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--task_name",

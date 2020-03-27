@@ -16,4 +16,5 @@ datapaths = {
     "quasars": "/home/pinecone/Data/Quasar/curtis.ml.cmu.edu/datasets/quasar/quasar-s/",
     "quasart": "/home/pinecone/Data/Quasar/curtis.ml.cmu.edu/datasets/quasar/quasar-t/",
     "amazonqa": "/home/pinecone/Data/AmazonQA/",
+    "naturalquestions": "/home/pinecone/Data/NaturalQuestions/",
 }
