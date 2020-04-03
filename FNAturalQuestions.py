@@ -27,6 +27,7 @@ def process_file(filename):
 
             question_list.append(len(question_tokens))
             passage_list.append(len(passage_text_tokens))
+            instance_list.append(entry["document_title"])
 
             answer = ""
             for annotation in entry["annotations"]:
