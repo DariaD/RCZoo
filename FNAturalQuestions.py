@@ -1,8 +1,6 @@
 import json
 import os
-import csv
 import gzip
-import jsonlines
 
 from spacy.lang.en import English
 
@@ -49,16 +47,17 @@ def process_file(filename):
             text_to_tokenize = " ".join(passage_text_tokens + question_tokens + [answer])
             tokens = tokenizer(text_to_tokenize)
             vocabulary.update({x.lemma_.lower() for x in tokens})
-            break
+            #break
 
-    return  question_list, passage_list, answer_list, vocabulary, html_token_set
+    return question_list, passage_list, answer_list, vocabulary, html_token_set
 
 
 def output(question_list, passage_list, answer_list, vocabulary, html_token_set):
-    print("Questions", question_list, len(question_list))
-    print("Passages", passage_list, len(passage_list))
-    print("Answers", answer_list, len(answer_list))
+    # print("Questions", question_list, len(question_list))
+    # print("Passages", passage_list, len(passage_list))
+    # print("Answers", answer_list, len(answer_list))
     print("Vocab", len(vocabulary))
+    print("HTML", len(html_token_set))
 
     passage_avg = sum(passage_list) / len(passage_list)
     avg_q = sum(question_list) / len(question_list)
@@ -83,13 +82,12 @@ def get_all_examples(data_dir):
     files = os.listdir(folder)
     for file in files:
         print(file)
-        with gzip.open(folder+file) as f:
-            q_list, p_list, a_list, vocab, html_set = process_file(folder + file)
-            question_list += q_list
-            passage_list += p_list
-            answer_list += a_list
-            vocabulary.update(vocab)
-            html_token_set.update(html_set)
+        q_list, p_list, a_list, vocab, html_set = process_file(folder + file)
+        question_list += q_list
+        passage_list += p_list
+        answer_list += a_list
+        vocabulary.update(vocab)
+        html_token_set.update(html_set)
 
         output(question_list, passage_list, answer_list, vocabulary, html_token_set)
 
@@ -99,15 +97,14 @@ def get_all_examples(data_dir):
     files = os.listdir(folder)
     for file in files:
         print(file)
-        with gzip.open(folder+file) as f:
-            q_list, p_list, a_list, vocab, html_set = process_file(folder + file)
-            question_list += q_list
-            passage_list += p_list
-            answer_list += a_list
-            vocabulary.update(vocab)
-            html_token_set.update(html_set)
+        q_list, p_list, a_list, vocab, html_set = process_file(folder + file)
+        question_list += q_list
+        passage_list += p_list
+        answer_list += a_list
+        vocabulary.update(vocab)
+        html_token_set.update(html_set)
 
-    output(question_list, passage_list, answer_list, vocabulary, html_token_set)
+        output(question_list, passage_list, answer_list, vocabulary, html_token_set)
 
     # # train reading
     # folder  = data_dir + "train/"
