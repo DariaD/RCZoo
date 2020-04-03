@@ -17,11 +17,11 @@ def get_all_examples(data_dir):
 
     # read dev file
     #input_file = "{}v1.0-simplified%2Fnq-dev-all.jsonl.gz".format(data_dir)
-    folder  = data_dir + "dev"
+    folder  = data_dir + "dev/"
     files = os.listdir(folder)
     for file in files:
-
-        with gzip.open(file) as f:
+        print(file)
+        with gzip.open(folder+file) as f:
             for line in f:
                 entry = json.loads(line)
                 passage_tokens = entry["document_tokens"]
@@ -65,7 +65,6 @@ def get_all_examples(data_dir):
                 vocabulary.update({x.lemma_.lower() for x in tokens})
                 break
 
-            break
 
         print(question_list, len(question_list))
         print(passage_list, len(passage_list))
@@ -86,14 +85,15 @@ def get_all_examples(data_dir):
     print("DEV complite")
 
     # train reading
-    folder  = data_dir + "train"
+    folder  = data_dir + "train/"
     files = os.listdir(folder)
     for file in files:
     #input_file = "{}v1.0-simplified%2Fsimplified-nq-train.jsonl.gz".format(data_dir)
-        with gzip.open(file) as f:
+        with gzip.open(folder+file) as f:
             for line in f:
                 entry = json.loads(line)
-                #print(entry)
+                print(type(entry))
+                print(entry.keys())
                 question = entry["question_text"]
                 q_tokens = tokenizer(question)
                 vocabulary.update({x.lemma_.lower() for x in q_tokens})
