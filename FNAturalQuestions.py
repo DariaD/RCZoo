@@ -152,6 +152,6 @@ def get_all_examples(data_dir):
     vocabulary_file.close()
 
 #data_dir = "/home/pinecone/Data/NaturalQuestions/"
-data_dir = "/Data/NaturalQuestions/v1.0/v1.0/"
+data_dir = "/home/pinecone/Data/NaturalQuestions/v1.0/v1.0/"
 get_all_examples(data_dir)
 
