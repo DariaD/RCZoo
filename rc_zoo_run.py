@@ -11,7 +11,7 @@ nlp = English()
 tokenizer = nlp.Defaults.create_tokenizer(nlp)
 
 def get_data(text_list):
-    s = 0
+    s, avg_tokens = 0, 0
     vocabulary = set()
     for text in text_list:
         #print(text)
@@ -22,7 +22,8 @@ def get_data(text_list):
             tokens = text.split()
         s = s + len(tokens)
         #vocabulary.update({x.lemma_ for x in tokens})
-    avg_tokens = s/len(text_list)
+    if len(text_list) > 0:
+        avg_tokens = s/len(text_list)
     return "{:.1f}".format(avg_tokens), vocabulary
 
 

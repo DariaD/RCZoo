@@ -17,4 +17,22 @@ datapaths = {
     "quasart": "/home/pinecone/Data/Quasar/curtis.ml.cmu.edu/datasets/quasar/quasar-t/",
     "amazonqa": "/home/pinecone/Data/AmazonQA/",
     "naturalquestions": "/home/pinecone/Data/NaturalQuestions/",
+    "duorc": "/home/pinecone/Data/duorc-master/dataset/",
+    "drop": "/home/pinecone/Data/drop_dataset/",
+    "clicr": "/home/pinecone/Data/Clicr/",
+
+
+    "quac": "/home/pinecone/Data/QuAC/",
+    "coqa": "/home/pinecone/Data/CoQA/",
+    #"multirc": "/home/pinecone/Data/MultiRC/splitv2",
+    "multirc": "/home/pinecone/Data/MultiRC/MultiRC",
+    "cosmosqa": "/home/pinecone/Data/cosmosqa-master/data/",
+    "movieqa": "/home/pinecone/Data/Movies/MovieQA/MovieQA_benchmark/",
+    "mcscript": "/home/pinecone/Data/MCScript/",
+    "mcscript2.0": "/home/pinecone/Data/MCScript/v2.0/",
+    "amazonyesno": "/home/pinecone/Data/AMAZON/data/",
+    "babi": "/home/pinecone/Data/bAbI/tasks_1-20_v1-2/en/",
+    "wikiqa": "/home/pinecone/Data/WikiQACorpus/",
+    "mctest160": "/home/pinecone/Data/MCTest/160",
+    "mctest500": "/home/pinecone/Data/MCTest/500",
 }

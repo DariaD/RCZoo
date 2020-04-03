@@ -4,132 +4,308 @@ import csv
 import gzip
 import jsonlines
 
+from WikiQA import WikiReaderIterable
 from utils import DataProcessor, RCExample
 
 
-class NaturalQuestionsProcessor(DataProcessor):
-
+class WikiQAProcessor(DataProcessor):
 
     def get_all_examples(self, data_dir):
         examples = []
+        """Read a WikiQA json file into a list of SquadExample."""
         question_list, passage_list, answer_list, instance_list = [], [], [], []
 
-        # read dev file
-        input_file = "{}v1.0-simplified%2Fnq-dev-all.jsonl.gz".format(data_dir)
-        with gzip.open(input_file) as f:
-            for line in f:
-                entry = json.loads(line)
-                question = entry["question_text"]
-                context_tokens = []
-                answer_tokens = []
-                tokens = entry["document_tokens"]
+        filename = data_dir + "WikiQA.tsv"
+        documents = WikiReaderIterable("doc", filename)
+        passage_list+=[" ".join(text) for text in list(iter(documents))]
 
-                for token in tokens:
-                    if token["html_token"]:
-                        continue
-                    context_tokens.append(token["token"])
-                passage = " ".join(context_tokens)
-                answer = []
-                for annotation in entry["annotations"]:
+        questions = WikiReaderIterable("query", filename)
+        question_list += list(iter(questions))
 
-                    if annotation["yes_no_answer"] != "NONE":
-                        answer = [annotation["yes_no_answer"]]
-                        # print(answer)
-                        # print(annotation)
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": [],
+                "answers": answer_list}
+
+
+
+class bAbIProcessor(DataProcessor):
+    """Processor for the BoolQ data set (GLUE version)."""
+
+    def get_all_examples(self, data_dir):
+        examples = []
+        """Read a SQuAD json file into a list of SquadExample."""
+        question_list, passage_list, answer_list, instance_list = [], [], [], []
+
+        files = os.listdir(data_dir)
+        for file in files:
+            story_input_file = os.path.join(data_dir, file)
+            with open(story_input_file) as reader:
+                all_lines = reader.readlines()
+                paragraph_lines = []
+                prev_number = 0
+                for line in all_lines:
+                    parts = line.split()
+                    number = int(parts[0])
+                    text = " ".join(parts[1:])
+                    if number < prev_number:
+                        passage = " ".join(paragraph_lines)
+                        passage_list.append(passage)
+                        paragraph_lines = []
+
+                    if "?" in text:
+                        q_parts = line.split("\t")
+                        question = " ".join(q_parts[0].split()[1:])
+                        question_list.append(question)
+                        answer = q_parts[1]
+                        answer_list.append(answer)
                     else:
-                        if len(annotation["short_answers"]) == 0:
-                            long_answer_raw = annotation["long_answer"]
-                            if long_answer_raw["candidate_index"] == -1:
-                                continue
-                           # print(annotation)
-                            answer_start = long_answer_raw["start_token"]
-                            answer_end = long_answer_raw["end_token"]
-                            i = 0
-                            for token in tokens:
-                                if token["html_token"]:
-                                    i += 1
-                                    continue
-                                if i >= answer_start and i < answer_end:
-                                    answer_tokens.append(token["token"])
-                                i += 1
-                            answer.append(" ".join(answer_tokens))
-                        else:
-                            for answer_raw in annotation["short_answers"]:
-                                answer_start = answer_raw["start_token"]
-                                answer_end = answer_raw["end_token"]
-                                i = 0
-                                for token in tokens:
-                                    if token["html_token"]:
-                                        i+=1
-                                        continue
-                                    if i >= answer_start and i < answer_end:
-                                        answer_tokens.append(token["token"])
-                                    i += 1
-                                answer.append(" ".join(answer_tokens))
+                        paragraph_lines.append(text)
+                    prev_number = number
+                    #print(paragraph_lines)
+                print("Passage", passage_list)
+                print("Question", question_list)
+                print("Answer", answer_list)
 
-                question_list.append(question)
+
+
+                # last story
+                passage = " ".join(paragraph_lines)
                 passage_list.append(passage)
-                answer_list+=answer
 
-                # print(question)
-                # print(passage)
-                # print(answer_raw)
-                # print(answer)
-                # break
 
-        print("DEV complite")
-        # train reading
-        input_file = "{}v1.0-simplified%2Fsimplified-nq-train.jsonl.gz".format(data_dir)
-        with gzip.open(input_file) as f:
-            for line in f:
-                entry = json.loads(line)
-                question = entry["question_text"]
-                answer_tokens = []
-                tokens = entry["document_text"].split()
-                annotation = entry["annotations"][0]
-                answer = []
-                if annotation["yes_no_answer"] != "NONE":
-                    answer = [annotation["yes_no_answer"]]
-                    #print(answer)
+        #             examples.append(RCExample(
+        #                 guid="",
+        #                 passage=passage,
+        #                 question=question,
+        #                 answer=answer,
+        #                 instance=None
+        #             ))
+        #
+        #             answer_list.append(answer)
+        #             question_list.append(question)
+        #
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": [],
+                "answers": answer_list}
 
-                else:
-                    if len(annotation["short_answers"]) == 0:
-                        answer_start = annotation["long_answer"]["start_token"]
-                        answer_end = annotation["long_answer"]["end_token"]
-                        for i in range(0, len(tokens)):
-                            if i >= answer_start and i < answer_end:
-                                answer_tokens.append(tokens[i])
-                        answer.append(" ".join(answer_tokens))
-                    else:
-                        for answer_raw in annotation["short_answers"]:
-                            answer_start = answer_raw["start_token"]
-                            answer_end = answer_raw["end_token"]
-                            for i in range(0, len(tokens)):
-                                if i >= answer_start and i < answer_end:
-                                    answer_tokens.append(tokens[i])
-                            answer.append(" ".join(answer_tokens))
 
-                passage = entry["document_text"]
 
+
+class CliCRProcessor(DataProcessor):
+    def get_all_examples(self, data_dir):
+
+        #questions and answers
+        train_data = self._read_examples(data_dir, "train")
+        dev_data   = self._read_examples(data_dir,  "dev")
+        test_data  = self._read_examples(data_dir,  "test")
+
+        examples = train_data["examples"] + dev_data["examples"] + test_data["examples"]
+
+        question_list = train_data["questions"] + dev_data["questions"] + test_data["questions"]
+        answer_list   = train_data["answers"]   + dev_data["answers"]   + test_data["answers"]
+        passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
+        instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
+        candidate_list = train_data["candidates"] + dev_data["candidates"] + test_data["candidates"]
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "candidates": candidate_list,
+                "answers": answer_list}
+
+
+
+    def _read_examples(self, folder, set):
+
+
+        def clean_text(text):
+            text = text.replace("\n", " ").replace("BEG__", "").replace("__END", "")
+            return text
+
+
+        """Creates examples for the training and dev sets."""
+        input_file = "{}{}1.0.json".format(folder, set)
+
+        with open(input_file, "r", encoding='utf-8') as reader:
+            input_data = json.load(reader)["data"]
+
+        examples = []
+        question_list, passage_list, answer_list, instance_list, ansercandidate_list = [], [], [], [], []
+        for entry in input_data:
+            entry = entry["document"]
+
+            passage = clean_text(entry["context"])
+            passage_list.append(passage)
+
+            for qas in entry["qas"]:
+                question = clean_text(qas["query"])
                 question_list.append(question)
-                passage_list.append(passage)
-                answer_list+=answer
+                for answer_entity in qas["answers"]:
+                    answer = answer_entity["text"]
+                    answer_list.append(answer)
 
-                # print(question)
-                # print(passage)
-                # print(answer_raw)
-                # print(answer)
-                #
-                # print(entry["annotations"])
-                # break
+            example = RCExample(
+                guid="",
+                passage=passage,
+                question=question_list,
+                answer=answer_list,
+                instance=None
+            )
+            #examples.append(example)
+            #print(example)
+            #break
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "candidates": ansercandidate_list,
+                "answers": answer_list}
 
 
+
+class DuoRCProcessor(DataProcessor):
+    """Processor for the BoolQ data set (GLUE version)."""
+    def get_all_examples(self, data_dir):
+
+        #questions and answers
+        train_data = self._read_questions_examples(data_dir, "train")
+        dev_data   = self._read_questions_examples(data_dir,  "dev")
+        test_data   = self._read_questions_examples(data_dir,  "test")
+
+        examples = train_data["examples"] + dev_data["examples"] + test_data["examples"]
+
+        question_list = train_data["questions"] + dev_data["questions"] + test_data["questions"]
+        answer_list   = train_data["answers"]   + dev_data["answers"]   + test_data["answers"]
+        passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
+        instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
 
         return {"examples": examples,
                 "questions": question_list,
                 "passages": passage_list,
                 "instances": instance_list,
                 "answers": answer_list}
+
+
+    def _read_questions_examples(self, folder, set):
+        """Creates examples for the training and dev sets."""
+        input_file = "{}/ParaphraseRC_{}.json".format(folder, set)
+
+        with open(input_file, "r", encoding='utf-8') as reader:
+            input_data = json.load(reader)
+
+        examples = []
+        question_list, passage_list, answer_list, instance_list = [], [], [], []
+        for entry in input_data:
+
+            passage = entry["plot"]
+            instance = entry["id"]
+            passage_list.append(passage)
+            instance_list.append(instance)
+            for question_entity in entry["qa"]:
+                question = question_entity["question"]
+                answer = question_entity["answers"]
+
+                question_list.append(question)
+                answer_list+=answer
+
+                example = RCExample(
+                    guid=entry["id"],
+                    passage=passage,
+                    question=question,
+                    answer=answer,
+                    instance=instance
+                )
+                examples.append(example)
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "answers": answer_list}
+
+class DROPProcessor(DataProcessor):
+        """Processor for the BoolQ data set (GLUE version)."""
+
+        def get_all_examples(self, data_dir):
+
+            # questions and answers
+            train_data = self._read_questions_examples(data_dir, "train")
+            dev_data = self._read_questions_examples(data_dir, "dev")
+
+            examples = train_data["examples"] + dev_data["examples"]
+            question_list = train_data["questions"] + dev_data["questions"]
+            answer_list = train_data["answers"] + dev_data["answers"]
+            passage_list = train_data["passages"] + dev_data["passages"]
+            instance_list = set(train_data["instances"] + dev_data["instances"])
+
+            return {"examples": examples,
+                    "questions": question_list,
+                    "passages": passage_list,
+                    "instances": instance_list,
+                    "answers": answer_list}
+
+        def _read_questions_examples(self, folder, set):
+            """Creates examples for the training and dev sets."""
+            input_file = "{}/drop_dataset_{}.json".format(folder, set)
+
+            with open(input_file, "r", encoding='utf-8') as reader:
+                input_data = json.load(reader)
+
+            examples = []
+            question_list, passage_list, answer_list, instance_list = [], [], [], []
+            for instance in input_data:
+                entry = input_data[instance]
+                #print(entry)
+
+                passage = entry["passage"]
+                passage_list.append(passage)
+                instance_list.append(instance)
+                for question_entity in entry["qa_pairs"]:
+                    question = question_entity["question"]
+
+                    answer_number = question_entity["answer"]["number"]
+                    answer_date = question_entity["answer"]["date"]
+                    answer_list = question_entity["answer"]["spans"]
+
+                    if len(answer_date) > 0:
+                        date = " ".join([answer_date["day"], answer_date["month"], answer_date["year"]])
+
+                        if len(date) > 3:
+                            print(date)
+                            answer_list.append(date)
+
+                    if len(answer_number) > 0:
+                        answer_list.append(answer_number)
+
+
+                    answer =  " ".join(answer_list)
+
+                    question_list.append(question)
+                    answer_list.append(answer)
+
+                    example = RCExample(
+                        guid=instance,
+                        passage=passage,
+                        question=question,
+                        answer=answer,
+                        instance=instance
+                    )
+                    examples.append(example)
+                #     print(example)
+                # break
+
+            return {"examples": examples,
+                    "questions": question_list,
+                    "passages": passage_list,
+                    "instances": instance_list,
+                    "answers": answer_list}
+
 
 
 
@@ -1051,6 +1227,11 @@ processors = {
     "quasars": QuasarProcessor,
     "quasart": QuasarProcessor,
     "amazonqa": AmazonQAProcessor,
-    "naturalquestions": NaturalQuestionsProcessor,
+   # "naturalquestions": NaturalQuestionsProcessor,
+    "duorc": DuoRCProcessor,
+    "drop": DuoRCProcessor,
+    "clicr": CliCRProcessor,
+    "babi": bAbIProcessor,
+    "wikiqa": WikiQAProcessor,
 }
 

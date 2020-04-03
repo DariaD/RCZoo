@@ -93,3 +93,10 @@ class DataProcessor(object):
         """Reads a tab separated value file."""
         with open(input_file, "r", encoding="utf-8-sig") as f:
             return list(csv.reader(f, delimiter="\t", quotechar=quotechar))
+
+
+class VocabularyProcessor(object):
+    def get_vocabulary_size(self, data_dir):
+        """Gets a collection of `InputExample`s for the train set."""
+        raise NotImplementedError()
+
