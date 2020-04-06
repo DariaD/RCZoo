@@ -7,6 +7,8 @@ from rc_zoo_utils import processors
 
 from spacy.lang.en import English
 
+from utils import write_vocabulary
+
 nlp = English()
 tokenizer = nlp.Defaults.create_tokenizer(nlp)
 
@@ -17,7 +19,7 @@ def get_data(text_list):
         #print(text)
         try:
             tokens = tokenizer(text)
-            vocabulary.update({x.lemma_ for x in tokens})
+            vocabulary.update({x.lemma_.lower() for x in tokens})
         except UnicodeEncodeError:
             tokens = text.split()
         s = s + len(tokens)
@@ -55,6 +57,7 @@ def main():
 
     avg_q, avg_p, avg_a = 0,0,0
     vocabulary = set()
+    replace_token = "-"
 
     if len(questions) > 0:
         avg_q, vocab_q = get_data(questions)
@@ -67,8 +70,10 @@ def main():
     if len(answers) > 0:
         avg_a, vocab_a = get_data(answers)
         vocabulary.update(vocab_a)
+    else:
+        avg_a = replace_token
 
-    replace_token = "-"
+
     avg_a_candidate = replace_token
 
     if "candidates" in data:
@@ -77,17 +82,19 @@ def main():
         vocabulary.update(vocab_a_c)
         avg_a_candidate = len(cnadidatelist)/len(questions)
 
-    print("AVG Q len:", avg_q)
-    print("AVG P len:", avg_p)
-    print("AVG A len:", avg_a)
-    print("VOCAB size:", len(vocabulary))
-    print("Number of Questions:", len(questions))
-    print("Number of Passages:", len(passages))
-    print("AVG Number of AnswerCandidate:", avg_a_candidate)
+    # print("AVG Q len:", avg_q)
+    # print("AVG P len:", avg_p)
+    # print("AVG A len:", avg_a)
+    # print("VOCAB size:", len(vocabulary))
+    # print("Number of Questions:", len(questions))
+    # print("Number of Passages:", len(passages))
+    # print("AVG Number of AnswerCandidate:", avg_a_candidate)
 
     len_instances = replace_token
     if len(instances) > 0:
         len_instances = len(instances)
+
+    write_vocabulary(vocabulary, args.task_name)
 
    # & # instances	& # passages &	# A/Q & AVG Q len	& AVG P len	 & AVG A len & Vcabulary Size
     print("&".join([str(x) for x in [args.task_name, len_instances, len(passages), avg_a_candidate, avg_q, avg_p, avg_a, len(vocabulary)]]))

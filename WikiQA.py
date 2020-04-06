@@ -136,14 +136,14 @@ answers_list = list(iter(answers))
 vocabulary = set()
 for text in questions_list:
     tokens = tokenizer(text)
-    vocabulary.update({x.lemma_ for x in tokens})
+    vocabulary.update({x.lemma_.lower() for x in tokens})
 
 new_passages_list = []
 for text in passages_list:
     text = " ".join(text)
     new_passages_list.append(text)
     tokens = tokenizer(text)
-    vocabulary.update({x.lemma_ for x in tokens})
+    vocabulary.update({x.lemma_.lower() for x in tokens})
 
 
 #print(passages_list)

@@ -3,30 +3,224 @@ import os
 import csv
 import gzip
 import jsonlines
+from xml.dom import minidom
 
-from WikiQA import WikiReaderIterable
-from utils import DataProcessor, RCExample
+# from WikiQA import WikiReaderIterable
+from utils import DataProcessor, RCExample, write_vocabulary
 
 
-class WikiQAProcessor(DataProcessor):
+class CNNDailyMailProcessor(DataProcessor):
 
     def get_all_examples(self, data_dir):
-        examples = []
-        """Read a WikiQA json file into a list of SquadExample."""
-        question_list, passage_list, answer_list, instance_list = [], [], [], []
 
-        filename = data_dir + "WikiQA.tsv"
-        documents = WikiReaderIterable("doc", filename)
-        passage_list+=[" ".join(text) for text in list(iter(documents))]
+        #questions and answers
+        train_data = self._read_examples(data_dir, "training")
+        dev_data   = self._read_examples(data_dir,  "validation")
+        test_data  = self._read_examples(data_dir,  "test")
 
-        questions = WikiReaderIterable("query", filename)
-        question_list += list(iter(questions))
+        examples = train_data["examples"] + dev_data["examples"] + test_data["examples"]
+
+        question_list = train_data["questions"] + dev_data["questions"] + test_data["questions"]
+        answer_list   = train_data["answers"]   + dev_data["answers"]   + test_data["answers"]
+        passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
+        instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
+        candidate_list = train_data["candidates"] + dev_data["candidates"] + test_data["candidates"]
+        named_entities = set()
+        named_entities.update(train_data["named_entities"])
+        named_entities.update(dev_data["named_entities"])
+        named_entities.update(test_data["named_entities"])
+        write_vocabulary(named_entities, "cnn_named_entities")
+
+        print("Named entities size is:", len(named_entities))
 
         return {"examples": examples,
                 "questions": question_list,
                 "passages": passage_list,
-                "instances": [],
+                "instances": instance_list,
+                "candidates": candidate_list,
                 "answers": answer_list}
+
+    def _return_named_entity(self, text, entity_dict):
+        tokens = text.split()
+        for i in range(len(tokens)):
+            if tokens[i] in entity_dict:
+                tokens[i] = entity_dict[tokens[i]]
+        return " ".join(tokens)
+
+    def _read_examples(self, folder, sub_set):
+        """Creates examples for the training and dev sets."""
+        # question_data_dir = "{}cnn/questions/{}".format(folder, sub_set)
+        question_data_dir = "{}/questions/{}".format(folder, sub_set)
+        story_data_dir = "{}stories/".format(folder)
+
+        examples = []
+        question_list, passage_list, answer_list, instance_list, ansercandidate_list = [], [], [], [], []
+        named_entities = set()
+
+        files = os.listdir(question_data_dir)
+        for file in files:
+            story_input_file = os.path.join(question_data_dir, file)
+            with open(story_input_file) as reader:
+                all_lines = reader.readlines()
+                new_lines = []
+                for line in all_lines:
+                    line = line.strip()
+                    if len(line) > 0:
+                        new_lines.append(line)
+                passage = new_lines[1]
+                question = new_lines[2]
+                answer = new_lines[3]
+                entities = new_lines[4:]
+                entity_dict = {}
+                for entity_line in entities:
+                    entity_parts = entity_line.strip().split(":")
+                    entity_dict[entity_parts[0]] = entity_parts[1]
+                    named_entities.update([entity_parts[1]])
+
+                passage = self._return_named_entity(passage, entity_dict)
+                question = self._return_named_entity(question, entity_dict)
+                answer = self._return_named_entity(answer, entity_dict)
+
+                # print("Passage:", passage)
+                # print("Question:", question)
+                # print("Answer:", answer)
+                # print("Named Entities:", named_entities)
+
+
+                passage_list.append(passage)
+                question_list.append(question)
+                answer_list.append(answer)
+                #break
+
+        # files = os.listdir(story_data_dir)
+        # for file in files:
+        #     story_input_file = os.path.join(story_data_dir, file)
+        #     with open(story_input_file) as reader:
+        #         all_lines = reader.readlines()
+        #         print(all_lines)
+        #         passage = ""
+        #         passage_list.append(passage)
+        #         break
+
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "candidates": ansercandidate_list,
+                "answers": answer_list,
+                "named_entities": named_entities}
+
+
+
+class WhoDidWhatProcessor(DataProcessor):
+
+    def get_all_examples(self, data_dir):
+
+        #questions and answers
+        train_data = self._read_examples(data_dir, "train")
+        dev_data   = self._read_examples(data_dir,  "val")
+        test_data  = self._read_examples(data_dir,  "test")
+
+        examples = train_data["examples"] + dev_data["examples"] + test_data["examples"]
+
+        question_list = train_data["questions"] + dev_data["questions"] + test_data["questions"]
+        answer_list   = train_data["answers"]   + dev_data["answers"]   + test_data["answers"]
+        passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
+        instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
+        candidate_list = train_data["candidates"] + dev_data["candidates"] + test_data["candidates"]
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "candidates": candidate_list,
+                "answers": answer_list}
+
+
+
+    def _read_examples(self, folder, set):
+        """Creates examples for the training and dev sets."""
+        if set == "train":
+            input_file = "{}Relaxed/{}_key.xml".format(folder, set)
+        else:
+            input_file = "{}Strict/{}_key.xml".format(folder, set)
+
+        examples = []
+        question_list, passage_list, answer_list, instance_list, ansercandidate_list = [], [], [], [], []
+
+        with open(input_file) as reader:
+            all_lines = reader.readlines()
+            left_part = ""
+            i = 0
+            for line in all_lines:
+                if "leftContext" in line:
+                    left_part = line.split(">")[1].split("<")[0]
+                if "rightContext" in line:
+                    right_part = line.split(">")[1].split("<")[0]
+                    question = " @placeholder ".join([left_part, right_part])
+                    question_list.append(question)
+                if "choice" in line:
+                    answer = line.split(">")[1].split("<")[0]
+                    answer_list.append(answer)
+
+
+                # i+=1
+                # if i > 18:
+                #     example = RCExample(
+                #         guid="",
+                #         passage="",
+                #         question=question_list,
+                #         answer=answer_list,
+                #         instance=None
+                #     )
+                #     print(example)
+                #     # examples.append(example)
+                #     break
+
+
+
+        # xmldoc = minidom.parse(input_file)
+        #
+        # instancelist = xmldoc.getElementsByTagName('mc')
+        # for instance in instancelist:
+        #     question = " ".join(instance.getElementsByTagName('leftContext'), instance.getElementsByTagName('rightContext'))
+        #     question_list.append(question)
+        #
+        #     for answer in instance.getElementsByTagName('choice'):
+        #         answer_list.append(answer)
+        #
+        #
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "candidates": ansercandidate_list,
+                "answers": answer_list}
+
+
+
+
+# class WikiQAProcessor(DataProcessor):
+#
+#     def get_all_examples(self, data_dir):
+#         examples = []
+#         """Read a WikiQA json file into a list of SquadExample."""
+#         question_list, passage_list, answer_list, instance_list = [], [], [], []
+#
+#         filename = data_dir + "WikiQA.tsv"
+#         documents = WikiReaderIterable("doc", filename)
+#         passage_list+=[" ".join(text) for text in list(iter(documents))]
+#
+#         questions = WikiReaderIterable("query", filename)
+#         question_list += list(iter(questions))
+#
+#         return {"examples": examples,
+#                 "questions": question_list,
+#                 "passages": passage_list,
+#                 "instances": [],
+#                 "answers": answer_list}
 
 
 
@@ -64,9 +258,9 @@ class bAbIProcessor(DataProcessor):
                         paragraph_lines.append(text)
                     prev_number = number
                     #print(paragraph_lines)
-                print("Passage", passage_list)
-                print("Question", question_list)
-                print("Answer", answer_list)
+                # print("Passage", passage_list)
+                # print("Question", question_list)
+                # print("Answer", answer_list)
 
 
 
@@ -277,7 +471,7 @@ class DROPProcessor(DataProcessor):
                         date = " ".join([answer_date["day"], answer_date["month"], answer_date["year"]])
 
                         if len(date) > 3:
-                            print(date)
+                            #print(date)
                             answer_list.append(date)
 
                     if len(answer_number) > 0:
@@ -1078,8 +1272,8 @@ class PubMedProcessor(DataProcessor):
             question_list, passage_list, answer_list, instance_list = [], [], [], []
             for i, data_entry in enumerate(data):
                 json_entry = data[data_entry]
-                print(data_entry)
-                print(json_entry)
+                #print(data_entry)
+                #print(json_entry)
 
                 question = json_entry["QUESTION"]
                 passages = json_entry["CONTEXTS"]
@@ -1125,7 +1319,8 @@ class BoolQProcessor(DataProcessor):
         question_list = train_data["questions"] + dev_data["questions"] + test_data["questions"]
         passage_list = train_data["passages"] + dev_data["passages"] + test_data["passages"]
         instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
-        answer_list = train_data["answers"] + dev_data["answers"] + test_data["answers"]
+        #answer_list = train_data["answers"] + dev_data["answers"] + test_data["answers"]
+        answer_list = []
 
         return {"examples": examples,
                 "questions": question_list,
@@ -1232,6 +1427,9 @@ processors = {
     "drop": DuoRCProcessor,
     "clicr": CliCRProcessor,
     "babi": bAbIProcessor,
-    "wikiqa": WikiQAProcessor,
+    #"wikiqa": WikiQAProcessor,
+    "wdw": WhoDidWhatProcessor,
+    "cnn": CNNDailyMailProcessor,
+    "dailymail": CNNDailyMailProcessor,
 }
 

@@ -23,9 +23,10 @@ def main():
         raise ValueError("Task not found: %s" % (args.task_name))
     processor = processors[args.task_name]()
     datapath = datapaths[args.task_name]
-    vocabulary_size = processor.get_vocabulary_size(datapath)
+    vocabulary = processor.get_vocabulary_size(datapath)
 
-    print("VOCAB size:", vocabulary_size)
+    print()
+    print("VOCAB size:", len(vocabulary))
 
 
 

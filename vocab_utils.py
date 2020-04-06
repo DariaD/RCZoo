@@ -23,7 +23,7 @@ class MCTestProcessor(VocabularyProcessor):
         vocabulary.update(dev_vocabulary)
         vocabulary.update(test_vocabulary)
         vocab_size = len(vocabulary)
-        return vocab_size
+        return vocabulary
 
     def _get_vocabulary(self, data_dir, subset):
         vocabulary = set()
@@ -81,7 +81,7 @@ class AmazonYesNoProcessor(VocabularyProcessor):
             #break
 
         vocab_size = len(vocabulary)
-        return vocab_size
+        return vocabulary
 
 
 class MCScriptProcessor(VocabularyProcessor):
@@ -95,7 +95,7 @@ class MCScriptProcessor(VocabularyProcessor):
         vocabulary.update(dev_vocabulary)
         vocabulary.update(test_vocabulary)
         vocab_size = len(vocabulary)
-        return vocab_size
+        return vocabulary
 
 
     def _get_vocabulary(self, folder, sub_set):
@@ -133,7 +133,7 @@ class MovieQAProcessor(VocabularyProcessor):
         vocabulary = plot_vocabulary
         vocabulary.update(qa_vocabulary)
         vocab_size = len(vocabulary)
-        return vocab_size
+        return vocabulary
 
 
     def _get_qa_vocabulary(self, folder, sub_set):
@@ -187,7 +187,7 @@ class CosmosQAProcessor(VocabularyProcessor):
         vocabulary.update(dev_vocabulary)
         vocabulary.update(test_vocabulary)
         vocab_size = len(vocabulary)
-        return vocab_size
+        return vocabulary
 
 
     def _get_vocabulary(self, folder, sub_set):
@@ -234,7 +234,7 @@ class CoQAProcessor(VocabularyProcessor):
         vocabulary = train_vocabulary
         vocabulary.update(dev_vocabulary)
         vocab_size = len(vocabulary)
-        return vocab_size
+        return vocabulary
 
     def _get_vocabulary(self, folder, sub_set):
         input_file =  "{}coqa-{}-v1.0.json".format(folder, sub_set)
@@ -270,7 +270,7 @@ class QuACProcessor(VocabularyProcessor):
         vocabulary = train_vocabulary
         vocabulary.update(dev_vocabulary)
         vocab_size = len(vocabulary)
-        return vocab_size
+        return vocabulary
 
     def _get_vocabulary(self, folder, sub_set):
         input_file =  "{}/{}_v0.2.json".format(folder, sub_set)
@@ -311,7 +311,7 @@ class MultiRCProcessor(VocabularyProcessor):
         vocabulary.update(dev_vocabulary)
         vocabulary.update(test_vocabulary)
         vocab_size = len(vocabulary)
-        return vocab_size
+        return vocabulary
 
     def _get_vocabulary(self, folder, sub_set):
         vocabulary = set()

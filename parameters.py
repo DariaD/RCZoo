@@ -20,6 +20,9 @@ datapaths = {
     "duorc": "/home/pinecone/Data/duorc-master/dataset/",
     "drop": "/home/pinecone/Data/drop_dataset/",
     "clicr": "/home/pinecone/Data/Clicr/",
+    "wdw": "/home/pinecone/Data/WhoDidWhat/wdw_script/keys/",
+    "cnn": "/home/pinecone/Data/cnn/cnn/",
+    "dailymail": "/home/pinecone/Data/cnn/dailymail",
 
 
     "quac": "/home/pinecone/Data/QuAC/",
