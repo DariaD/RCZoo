@@ -22,7 +22,7 @@ datapaths = {
     "clicr": "/home/pinecone/Data/Clicr/",
     "wdw": "/home/pinecone/Data/WhoDidWhat/wdw_script/keys/",
     "cnn": "/home/pinecone/Data/cnn/cnn/",
-    "dailymail": "/home/pinecone/Data/cnn/dailymail",
+    "dailymail": "/home/pinecone/Data/dailymail",
 
 
     "quac": "/home/pinecone/Data/QuAC/",
