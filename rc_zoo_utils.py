@@ -33,14 +33,14 @@ class SearchQAProcessor(DataProcessor):
                 "instances": instance_list,
                 "answers": answer_list}
 
-    def _read_questions_examples(self, folder, set):
+    def _read_questions_examples(self, folder, sub_set):
         """Creates examples for the training and dev sets."""
         examples = []
         question_list, passage_list, answer_list, instance_list = [], [], [], []
 
-        files = os.listdir(os.path.join(folder, set))
+        files = os.listdir(os.path.join(folder, sub_set))
         for file in files:
-            input_file = os.path.join(folder, set, file)
+            input_file = os.path.join(folder, sub_set, file)
 
             with open(input_file, "r", encoding='utf-8') as reader:
                 entry = json.load(reader)
@@ -63,8 +63,8 @@ class SearchQAProcessor(DataProcessor):
                 example = RCExample(
                     guid="",
                     passage=passage,
-                    question=question_list,
-                    answer=answer_list,
+                    question=question,
+                    answer=answer,
                     instance=instance
                 )
                 examples.append(example)
