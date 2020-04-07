@@ -26,7 +26,7 @@ datapaths = {
     #"dailymail": "/home/pinecone/Data/cnn/dailymail",
     "msmarco": "/home/pinecone/Data/MSMARCO/",
     "newsqa": "/home/pinecone/Data/NewsQA/",
-    "searchqa": "/home/pinecone/Data/SearchQA/",
+    "searchqa": "/home/pinecone/Data/SearchQA/data_json/",
 
 
 
