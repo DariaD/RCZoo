@@ -41,14 +41,17 @@ class MsMarcoProcessor(DataProcessor):
             for entry in f:
                 entry = eval(entry)
                 # print(entry)
-                answers = entry["answers"]
-                print(answers[0])
+                query_id = entry["query_id"]
+                print(query_id[0])
 
-                passages = entry["passages"]
-                print(passages[0])
-
-                query = entry["query"]
-                print(query[0])
+                # answers = entry["answers"]
+                # print(answers[0])
+                #
+                # passages = entry["passages"]
+                # print(passages[0])
+                #
+                # query = entry["query"]
+                # print(query[0])
 
             # for sentence in entry["contexts"]:
                 #     context_list.append(sentence[1])
