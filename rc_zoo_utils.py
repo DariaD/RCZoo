@@ -8,6 +8,54 @@ from xml.dom import minidom
 # from WikiQA import WikiReaderIterable
 from utils import DataProcessor, RCExample, write_vocabulary
 
+class NewsQAProcessor(DataProcessor):
+    def get_all_examples(self, data_dir):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        question_list, passage_list, answer_list, instance_list, ansercandidate_list = [], [], [], [], []
+
+        input_file = "{}combined-newsqa-data-v1.json".format(data_dir)
+
+        with open(input_file, "r", encoding='utf-8') as reader:
+            input_data = json.load(reader)["data"]
+
+        for entry in input_data:
+            instance_list.append(entry["storyId"])
+            passage = entry["text"]
+            passage_list.append(entry["text"])
+
+            for qas in entry["questions"]:
+                question = qas["q"]
+                question_list.append(question)
+                for answer_entity in qas["answers"]:
+                    potential_answer = answer_entity["sourcerAnswers"]
+                    if "noAnswer" in potential_answer.keys():
+                        continue
+                    start =  potential_answer["s"]
+                    end =  potential_answer["e"]
+
+                    answer = passage[start:end]
+                    answer_list.append(answer)
+
+            example = RCExample(
+                guid="",
+                passage=passage,
+                question=question_list,
+                answer=answer_list,
+                instance=None
+            )
+            examples.append(example)
+            print(example)
+            break
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": set(instance_list),
+                "candidates": ansercandidate_list,
+                "answers": answer_list}
+
+
 
 class MsMarcoProcessor(DataProcessor):
 
@@ -1513,5 +1561,6 @@ processors = {
     "cnn": CNNDailyMailProcessor,
     "dailymail": CNNDailyMailProcessor,
     "msmarco": MsMarcoProcessor,
+    "newsqa": NewsQAProcessor,
 }
 
