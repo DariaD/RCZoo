@@ -74,7 +74,7 @@ class SearchQAProcessor(DataProcessor):
         return {"examples": examples,
                 "questions": question_list,
                 "passages": passage_list,
-                "instances": set(instance_list),
+                "instances": instance_list,
                 "candidates": [],
                 "answers": answer_list}
 
