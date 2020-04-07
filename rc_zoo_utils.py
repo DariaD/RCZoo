@@ -39,16 +39,16 @@ class NewsQAProcessor(DataProcessor):
                         answer_set.update([answer.strip()])
                 answer_list+=(list(answer_set))
 
-            example = RCExample(
-                guid="",
-                passage=passage,
-                question=question_list,
-                answer=answer_list,
-                instance=entry["storyId"]
-            )
-            examples.append(example)
-            print(example)
-            break
+            # example = RCExample(
+            #     guid="",
+            #     passage=passage,
+            #     question=question_list,
+            #     answer=answer_list,
+            #     instance=entry["storyId"]
+            # )
+            # examples.append(example)
+            # print(example)
+            # break
 
         return {"examples": examples,
                 "questions": question_list,
