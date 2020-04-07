@@ -28,14 +28,14 @@ class NewsQAProcessor(DataProcessor):
                 question = qas["q"]
                 question_list.append(question)
                 for answer_entity in qas["answers"]:
-                    potential_answer = answer_entity["sourcerAnswers"]
-                    if "noAnswer" in potential_answer.keys():
-                        continue
-                    start =  potential_answer["s"]
-                    end =  potential_answer["e"]
+                    for potential_answer in answer_entity["sourcerAnswers"]:
+                        if "noAnswer" in potential_answer.keys():
+                            continue
+                        start =  potential_answer["s"]
+                        end =  potential_answer["e"]
 
-                    answer = passage[start:end]
-                    answer_list.append(answer)
+                        answer = passage[start:end]
+                        answer_list.append(answer)
 
             example = RCExample(
                 guid="",
