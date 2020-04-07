@@ -42,40 +42,28 @@ class MsMarcoProcessor(DataProcessor):
                 entry = eval(entry)
                 # print(entry)
                 query_id = entry["query_id"]
-                for keys in query_id.keys:
-                    print(keys[0])
-                    print(query_id[keys])
+                answers = entry["answers"]
+                all_passages = entry["passages"]
+                queries = entry["query"]
+                for keys in query_id.keys():
+                    q_id = query_id[keys]
+                    print(q_id)
+                    answer = answers[keys]
+                    answer_list+=answer
+                    print("Answer:", answer)
+
+                    passages = all_passages[keys]
+                    for passage in passages:
+                        passage_list.append(passage["passage_text"])
+                    print("Passages", passages)
+
+                    question = queries[keys]
+                    print(question)
+                    question_list.append(question)
+
                     break
                 break
 
-
-                # answers = entry["answers"]
-                # print(answers[0])
-                #
-                # passages = entry["passages"]
-                # print(passages[0])
-                #
-                # query = entry["query"]
-                # print(query[0])
-
-            # for sentence in entry["contexts"]:
-                #     context_list.append(sentence[1])
-                # passage = " ".join(context_list)
-                # passage_dict[entry["uid"]] = passage
-                # passage_list.append(passage)
-
-        #
-        # questions_input_file = "{}questions/{}_questions.json.gz".format(folder, set)
-        # with gzip.open(questions_input_file) as f:
-        #     for line in f:
-        #         entry = eval(line)
-        #         q_id = entry["uid"]
-        #         question = entry["question"]
-        #         answer = entry["answer"]
-        #
-        #         answer_list.append(answer)
-        #         question_list.append(question)
-        #
         #         example = RCExample(
         #             guid=q_id,
         #             passage=passage_dict[q_id],
@@ -86,11 +74,11 @@ class MsMarcoProcessor(DataProcessor):
         #         examples.append(example)
         #         #print(example)
         #
-        # return {"examples": examples,
-        #         "questions": question_list,
-        #         "passages": passage_list,
-        #         "instances": instance_list,
-        #         "answers": answer_list}
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "answers": answer_list}
 
 
 
