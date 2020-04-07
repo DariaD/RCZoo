@@ -50,7 +50,7 @@ class SearchQAProcessor(DataProcessor):
                 instance_list.append(instance)
                 search_results = entry["search_results"]
                 for s_result in search_results:
-                    if len(s_result["snippet"]) > 0:
+                    if s_result["snippet"]:
                         passage = s_result["snippet"]
                         passage_list.append(passage)
 
