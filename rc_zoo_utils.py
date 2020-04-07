@@ -15,7 +15,7 @@ class MsMarcoProcessor(DataProcessor):
     def get_all_examples(self, data_dir):
         #train_data = self._read_questions_examples(data_dir, "train")
         dev_data   = self._read_questions_examples(data_dir,  "dev")
-        test_data  = self._read_questions_examples(data_dir,  "eval")
+        #test_data  = self._read_questions_examples(data_dir,  "eval")
 
         # examples = train_data["examples"] + dev_data["examples"] + test_data["examples"]
         #
@@ -30,9 +30,7 @@ class MsMarcoProcessor(DataProcessor):
         #         "instances": instance_list,
         #         "answers": answer_list}
 
-
     def _read_questions_examples(self, folder, set):
-
         """Creates examples for the training and dev sets."""
         examples = []
         question_list, passage_list, answer_list, instance_list = [], [], [], []
@@ -41,11 +39,18 @@ class MsMarcoProcessor(DataProcessor):
         passage_dict = {}
         with gzip.open(context_input_file) as f:
             for entry in f:
-                #entry = eval(entry)
-                context_list = []
-                print(entry)
-                break
-                # for sentence in entry["contexts"]:
+                entry = eval(entry)
+                # print(entry)
+                answers = entry["answers"]
+                print(answers[0])
+
+                passages = entry["passages"]
+                print(passages[0])
+
+                query = entry["query"]
+                print(query[0])
+
+            # for sentence in entry["contexts"]:
                 #     context_list.append(sentence[1])
                 # passage = " ".join(context_list)
                 # passage_dict[entry["uid"]] = passage
