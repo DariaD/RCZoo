@@ -37,7 +37,7 @@ class NewsQAProcessor(DataProcessor):
 
                         answer = passage[start:end]
                         answer_set.update([answer.strip()])
-                answer_list.append(list(answer_set))
+                answer_list+=(list(answer_set))
 
             example = RCExample(
                 guid="",
