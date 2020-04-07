@@ -42,7 +42,12 @@ class MsMarcoProcessor(DataProcessor):
                 entry = eval(entry)
                 # print(entry)
                 query_id = entry["query_id"]
-                print(query_id[0])
+                for keys in query_id.keys:
+                    print(keys[0])
+                    print(query_id[keys])
+                    break
+                break
+
 
                 # answers = entry["answers"]
                 # print(answers[0])
