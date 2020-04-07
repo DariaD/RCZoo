@@ -13,22 +13,22 @@ class MsMarcoProcessor(DataProcessor):
 
 
     def get_all_examples(self, data_dir):
-        #train_data = self._read_questions_examples(data_dir, "train")
+        train_data = self._read_questions_examples(data_dir, "train")
         dev_data   = self._read_questions_examples(data_dir,  "dev")
-        #test_data  = self._read_questions_examples(data_dir,  "eval")
+        test_data  = self._read_questions_examples(data_dir,  "eval")
 
-        # examples = train_data["examples"] + dev_data["examples"] + test_data["examples"]
-        #
-        # question_list = train_data["questions"] + dev_data["questions"] + test_data["questions"]
-        # answer_list   = train_data["answers"]   + dev_data["answers"]   + test_data["answers"]
-        # passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
-        # instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
-        #
-        # return {"examples": examples,
-        #         "questions": question_list,
-        #         "passages": passage_list,
-        #         "instances": instance_list,
-        #         "answers": answer_list}
+        examples = train_data["examples"] + dev_data["examples"] + test_data["examples"]
+
+        question_list = train_data["questions"] + dev_data["questions"] + test_data["questions"]
+        answer_list   = train_data["answers"]   + dev_data["answers"]   + test_data["answers"]
+        passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
+        instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "answers": answer_list}
 
     def _read_questions_examples(self, folder, set):
         """Creates examples for the training and dev sets."""
@@ -36,11 +36,9 @@ class MsMarcoProcessor(DataProcessor):
         question_list, passage_list, answer_list, instance_list = [], [], [], []
 
         context_input_file = "{}{}_v2.1.json.gz".format(folder, set)
-        passage_dict = {}
         with gzip.open(context_input_file) as f:
             for entry in f:
                 entry = eval(entry)
-                # print(entry)
                 query_id = entry["query_id"]
                 answers = entry["answers"]
                 all_passages = entry["passages"]
@@ -58,7 +56,7 @@ class MsMarcoProcessor(DataProcessor):
                     print("Passages", passages)
 
                     question = queries[keys]
-                    print(question)
+                    print("Question", question)
                     question_list.append(question)
 
                     break
