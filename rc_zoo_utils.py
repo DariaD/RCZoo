@@ -14,8 +14,11 @@ class MsMarcoProcessor(DataProcessor):
 
     def get_all_examples(self, data_dir):
         train_data = self._read_questions_examples(data_dir, "train")
+        print("Finished train...")
         dev_data   = self._read_questions_examples(data_dir,  "dev")
+        print("Finished dev...")
         test_data  = self._read_questions_examples(data_dir,  "eval")
+        print("Finished eval...")
 
         examples = train_data["examples"] + dev_data["examples"] + test_data["examples"]
 
@@ -36,6 +39,8 @@ class MsMarcoProcessor(DataProcessor):
         question_list, passage_list, answer_list, instance_list = [], [], [], []
 
         context_input_file = "{}{}_v2.1.json.gz".format(folder, set)
+        if set == "eval":
+            context_input_file = "{}{}_v2.1_public.json.gz".format(folder, set)
         with gzip.open(context_input_file) as f:
             for entry in f:
                 entry = eval(entry)
