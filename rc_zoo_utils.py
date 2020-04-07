@@ -45,15 +45,13 @@ class MsMarcoProcessor(DataProcessor):
             for entry in f:
                 entry = eval(entry)
                 query_id = entry["query_id"]
-                answers = entry["answers"]
+
                 all_passages = entry["passages"]
                 queries = entry["query"]
                 for keys in query_id.keys():
                     q_id = query_id[keys]
                     print(q_id)
-                    answer = answers[keys]
-                    answer_list+=answer
-                    print("Answer:", answer)
+
 
                     passages = all_passages[keys]
                     for passage in passages:
@@ -63,6 +61,13 @@ class MsMarcoProcessor(DataProcessor):
                     question = queries[keys]
                     print("Question", question)
                     question_list.append(question)
+
+
+                    if set != "eval":
+                        answers = entry["answers"]
+                        answer = answers[keys]
+                        answer_list += answer
+                        print("Answer:", answer)
 
                     break
                 break
