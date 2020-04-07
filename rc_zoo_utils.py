@@ -43,32 +43,32 @@ class SearchQAProcessor(DataProcessor):
             input_file = os.path.join(folder, set, file)
 
             with open(input_file, "r", encoding='utf-8') as reader:
-                input_data = json.load(reader)
+                entry = json.load(reader)
 
-                for entry in input_data:
-                    instance = entry["category"]
-                    instance_list.append(instance)
-                    search_results = entry["search_results"]
-                    for s_result in search_results:
-                        if len(s_result["snippet"]) > 0:
-                            passage = s_result["snippet"]
-                            passage_list.append(passage)
+                #for entry in input_data:
+                instance = entry["category"]
+                instance_list.append(instance)
+                search_results = entry["search_results"]
+                for s_result in search_results:
+                    if len(s_result["snippet"]) > 0:
+                        passage = s_result["snippet"]
+                        passage_list.append(passage)
 
 
-                    question = entry["question"]
-                    question_list.append(question)
-                    answer = entry["answer"]
-                    answer_list.append(answer)
+                question = entry["question"]
+                question_list.append(question)
+                answer = entry["answer"]
+                answer_list.append(answer)
 
-                    example = RCExample(
-                        guid="",
-                        passage=passage,
-                        question=question_list,
-                        answer=answer_list,
-                        instance=instance
-                    )
-                    examples.append(example)
-                    print(example)
+                example = RCExample(
+                    guid="",
+                    passage=passage,
+                    question=question_list,
+                    answer=answer_list,
+                    instance=instance
+                )
+                examples.append(example)
+                print(example)
             break
 
         return {"examples": examples,
