@@ -27,7 +27,8 @@ class SearchQAProcessor(DataProcessor):
         passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
         instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
 
-        print(len(passage_list), passage_list)
+#        print(len(passage_list), passage_list)
+        print(len(passage_list))
         print(len(question_list), question_list)
         print(len(answer_list), answer_list)
         print(len(instance_list), instance_list)
@@ -57,6 +58,8 @@ class SearchQAProcessor(DataProcessor):
                 for s_result in search_results:
                     if s_result["snippet"]:
                         passage = s_result["snippet"]
+                        passage = passage.replace("\n", "").replace("...", "").replace("....", "").replace(".....", "").replace("......", "")
+
                         passage_list.append(passage)
 
 
