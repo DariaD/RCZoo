@@ -27,6 +27,12 @@ class SearchQAProcessor(DataProcessor):
         passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
         instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
 
+        print(len(passage_list), passage_list)
+        print(len(question_list), question_list)
+        print(len(answer_list), answer_list)
+        print(len(instance_list), instance_list)
+
+
         return {"examples": examples,
                 "questions": question_list,
                 "passages": passage_list,
@@ -45,7 +51,6 @@ class SearchQAProcessor(DataProcessor):
             with open(input_file, "r", encoding='utf-8') as reader:
                 entry = json.load(reader)
 
-                #for entry in input_data:
                 instance = entry["category"]
                 instance_list.append(instance)
                 search_results = entry["search_results"]
@@ -60,15 +65,15 @@ class SearchQAProcessor(DataProcessor):
                 answer = entry["answer"]
                 answer_list.append(answer)
 
-                example = RCExample(
-                    guid="",
-                    passage=passage,
-                    question=question,
-                    answer=answer,
-                    instance=instance
-                )
-                examples.append(example)
-                print(example)
+                # example = RCExample(
+                #     guid="",
+                #     passage=passage_list,
+                #     question=question,
+                #     answer=answer,
+                #     instance=instance
+                # )
+                # examples.append(example)
+                # print(example)
             break
 
         return {"examples": examples,
