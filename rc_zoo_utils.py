@@ -27,6 +27,7 @@ class NewsQAProcessor(DataProcessor):
             for qas in entry["questions"]:
                 question = qas["q"]
                 question_list.append(question)
+                answer_set = set()
                 for answer_entity in qas["answers"]:
                     for potential_answer in answer_entity["sourcerAnswers"]:
                         if "noAnswer" in potential_answer.keys():
@@ -35,14 +36,15 @@ class NewsQAProcessor(DataProcessor):
                         end =  potential_answer["e"]
 
                         answer = passage[start:end]
-                        answer_list.append(answer)
+                        answer_set.update([answer.strip()])
+                answer_list.append(list(answer_set))
 
             example = RCExample(
                 guid="",
                 passage=passage,
                 question=question_list,
                 answer=answer_list,
-                instance=None
+                instance=entry["storyId"]
             )
             examples.append(example)
             print(example)
