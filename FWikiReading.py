@@ -28,7 +28,7 @@ def process_file(filename):
             text_to_tokenize = " ".join(passage_tokens + question_tokens + answer_tokens)
             tokens = tokenizer(text_to_tokenize)
             vocabulary.update({x.lemma_.lower() for x in tokens})
-            break
+            # break
 
     return question_list, passage_list, answer_list, instance_list, vocabulary, html_token_set
 
@@ -46,7 +46,7 @@ def output(question_list, passage_list, answer_list, instance_list, vocabulary):
     # & # instances	& # passages &	# A/Q & AVG Q len	& AVG P len	 & AVG A len & Vcabulary Size
     print("&".join([str(x) for x in ["WikiReading", len(instance_list), len(passage_list), "-", avg_q, passage_avg, avg_a, len(vocabulary)]]))
 
-    print(vocabulary)
+    # print(vocabulary)
     # print(html_token_set)
     print("----------------------------------------------")
 
@@ -71,7 +71,7 @@ def process_examples(data_dir):
         html_token_set.update(html_set)
 
         output(question_list, passage_list, answer_list, set(instance_list), vocabulary)
-        break
+        # break
 
     print("Files complite")
 
