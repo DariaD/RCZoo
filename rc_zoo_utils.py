@@ -1093,7 +1093,8 @@ class HotpotQAProcessor(DataProcessor):
                 "questions": question_list,
                 "passages": passage_list,
                 "instances": instance_list,
-                "answers": answer_list}
+                "answers": answer_list,
+                "candidates": []}
 
 
     def _read_questions_examples(self, folder, set):

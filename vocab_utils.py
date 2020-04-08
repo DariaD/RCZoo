@@ -11,6 +11,79 @@ from spacy.lang.en import English
 nlp = English()
 tokenizer = nlp.Defaults.create_tokenizer(nlp)
 
+class LambadaProcessor(VocabularyProcessor):
+
+    def get_vocabulary_size(self, data_dir):
+        dev_vocabulary, dev_question_len_list, dev_passage_len_list = self._get_vocabulary(data_dir, "development")
+       # print("Dev done")
+        test_vocabulary, test_question_len_list, test_passage_len_list = self._get_vocabulary(data_dir, "test")
+       # print("Test done")
+
+        question_len_list = dev_question_len_list + test_question_len_list
+        avg_q_len = sum(question_len_list) / len(question_len_list)
+       # print("Average question length:", avg_q_len)
+
+        passage_len_list = dev_passage_len_list + test_passage_len_list
+        avg_q_len = sum(passage_len_list) / len(passage_len_list)
+       # print("Average passage length:", avg_q_len)
+
+
+
+        train_vocabulary = self._get_train_vocabulary(os.path.join(data_dir, "train-novels"))
+       # print("Train done")
+
+        vocabulary = train_vocabulary
+        vocabulary.update(dev_vocabulary)
+        vocabulary.update(test_vocabulary)
+        return vocabulary
+
+    def _get_train_vocabulary(self, data_dir):
+        vocabulary = set()
+
+        folders = os.listdir(data_dir)
+        for folder in folders:
+           # print(folder)
+            files = os.listdir(os.path.join(data_dir, folder))
+            for file in files:
+                story_input_file = os.path.join(data_dir, folder, file)
+                with open(story_input_file) as reader:
+                    # print(story_input_file)
+                    story_lines = reader.readlines()
+                    for text in story_lines:
+                        text = text.strip()
+                        tokens = tokenizer(text)
+                        vocabulary.update({x.lemma_.lower() for x in tokens})
+
+
+        return vocabulary
+
+    def _get_vocabulary(self, data_dir, subset):
+        vocabulary = set()
+        question_len_list = []
+        passage_len_list = []
+
+        input_file = os.path.join(data_dir, "lambada_{}_plain_text.txt".format(subset))
+        with open(input_file) as reader:
+          #  print(input_file)
+            story_lines = reader.readlines()
+            for text in story_lines:
+                text = text.strip()
+                #print(text)
+
+                whole_passage = text.split()
+                question = text.split(".")[-1]
+                question_len = len(question.split())
+                question_len_list.append(question_len)
+                passage_len_list.append(len(whole_passage) - question_len)
+
+                tokens = tokenizer(text)
+                vocabulary.update({x.lemma_.lower() for x in tokens})
+
+
+
+        return vocabulary, question_len_list, passage_len_list
+
+
 
 class MCTestProcessor(VocabularyProcessor):
 
@@ -33,7 +106,7 @@ class MCTestProcessor(VocabularyProcessor):
             if "{}.tsv".format(subset) not in file:
                 continue
             with open(os.path.join(data_dir, file)) as fd:
-                print(data_dir + file)
+               # print(data_dir + file)
                 rd = csv.reader(fd, delimiter="\t", quotechar='"')
                 for row in rd:
                     for text in row[2:]:
@@ -42,8 +115,6 @@ class MCTestProcessor(VocabularyProcessor):
                         vocabulary.update({x.lemma_.lower() for x in tokens})
 
             return vocabulary
-
-
 
 
 class AmazonYesNoProcessor(VocabularyProcessor):
@@ -61,7 +132,7 @@ class AmazonYesNoProcessor(VocabularyProcessor):
                     continue
                 file_name = data_dir + folder + "/" + file
                 with open(file_name, "r") as reader:
-                    print(file_name)
+                    #print(file_name)
                     input_data = json.load(reader)
 
                 for entry_element in input_data:
@@ -122,8 +193,6 @@ class MCScriptProcessor(VocabularyProcessor):
         return vocabulary
 
 
-
-
 class MovieQAProcessor(VocabularyProcessor):
 
     def get_vocabulary_size(self, data_dir):
@@ -155,7 +224,7 @@ class MovieQAProcessor(VocabularyProcessor):
            # break
 
         avg_answer_len = sum(answer_len_list) / len(answer_len_list)
-        print("AVG answer len:", avg_answer_len)
+        #print("AVG answer len:", avg_answer_len)
         return vocabulary
 
 
@@ -173,7 +242,6 @@ class MovieQAProcessor(VocabularyProcessor):
 #            break
 
         return vocabulary
-
 
 
 class CosmosQAProcessor(VocabularyProcessor):
@@ -363,7 +431,7 @@ class MultiRCProcessor(VocabularyProcessor):
                 # print(text_list)
                 # break
 
-            print(question_count)
+            #print(question_count)
         return vocabulary
 
 
@@ -379,5 +447,6 @@ processors = {
     "amazonyesno": AmazonYesNoProcessor,
     "mctest160": MCTestProcessor,
     "mctest500": MCTestProcessor,
+    "lambada": LambadaProcessor,
 
 }

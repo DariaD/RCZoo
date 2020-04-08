@@ -3,6 +3,7 @@ import argparse
 import re
 
 from parameters import datapaths
+from utils import write_vocabulary
 from vocab_utils import processors
 
 from spacy.lang.en import English
@@ -25,8 +26,9 @@ def main():
     datapath = datapaths[args.task_name]
     vocabulary = processor.get_vocabulary_size(datapath)
 
-    print()
-    print("VOCAB size:", len(vocabulary))
+    #print()
+    print(args.task_name, "VOCAB size:", len(vocabulary))
+    write_vocabulary(vocabulary, args.task_name)
 
 
 

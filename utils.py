@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def write_vocabulary(vocabulary, taskname):
     # print("writing vocabulary...")
-    vocabulary_file_name = "vocabulary/{}_debug.txt".format(taskname)
+    vocabulary_file_name = "/home/pinecone/Data/Vocabulary/{}.txt".format(taskname)
     vocabulary_file = open(vocabulary_file_name, "w")
     for v in sorted(vocabulary):
         string_out = v + "\n"

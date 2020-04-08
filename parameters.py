@@ -16,7 +16,7 @@ datapaths = {
     "quasars": "/home/pinecone/Data/Quasar/curtis.ml.cmu.edu/datasets/quasar/quasar-s/",
     "quasart": "/home/pinecone/Data/Quasar/curtis.ml.cmu.edu/datasets/quasar/quasar-t/",
     "amazonqa": "/home/pinecone/Data/AmazonQA/",
-    "naturalquestions": "/home/pinecone/Data/NaturalQuestions/",
+    # naturalquestions": "/home/pinecone/Data/NaturalQuestions/",
     "duorc": "/home/pinecone/Data/duorc-master/dataset/",
     "drop": "/home/pinecone/Data/drop_dataset/",
     "clicr": "/home/pinecone/Data/Clicr/",
@@ -44,4 +44,5 @@ datapaths = {
     "wikiqa": "/home/pinecone/Data/WikiQACorpus/",
     "mctest160": "/home/pinecone/Data/MCTest/160",
     "mctest500": "/home/pinecone/Data/MCTest/500",
+    "lambada": "/home/pinecone/Data/LAMBADA",
 }

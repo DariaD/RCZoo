@@ -1,11 +1,11 @@
 datasetnames=(
     boolq
-    pubmedqa
-    squad
-    squad2.0
+    #pubmedqa
+    #squad
+    #squad2.0
     wikimovies
-    narrativeqa
-    sharc
+    #narrativeqa
+    #sharc
     turkqa
     hotpotqa
     medhop
@@ -23,6 +23,6 @@ datasetnames=(
 
 for i in "${datasetnames[@]}";
 do
-    echo $i
+    #echo $i
 	python3 rc_zoo_run.py --task_name="$i"
 done

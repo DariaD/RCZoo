@@ -1,6 +1,5 @@
 import json
 import os
-import gzip
 
 from spacy.lang.en import English
 
@@ -9,7 +8,6 @@ tokenizer = nlp.Defaults.create_tokenizer(nlp)
 
 
 def process_file(filename):
-    question_list, passage_list, answer_list, instance_list = [], [], [], []
     vocabulary, html_token_set = set(), set()
     with open(filename, "r", encoding="utf-8") as reader:
         question_list, passage_list, answer_list, instance_list = [], [], [], []
@@ -37,7 +35,7 @@ def output(question_list, passage_list, answer_list, instance_list, vocabulary):
     # print("Questions", question_list, len(question_list))
     # print("Passages", passage_list, len(passage_list))
     # print("Answers", answer_list, len(answer_list))
-    print("Vocab", len(vocabulary))
+    # print("Vocab", len(vocabulary))
 
     passage_avg = sum(passage_list) / len(passage_list)
     avg_q = sum(question_list) / len(question_list)
@@ -46,9 +44,7 @@ def output(question_list, passage_list, answer_list, instance_list, vocabulary):
     # & # instances	& # passages &	# A/Q & AVG Q len	& AVG P len	 & AVG A len & Vcabulary Size
     print("&".join([str(x) for x in ["WikiReading", len(instance_list), len(passage_list), "-", avg_q, passage_avg, avg_a, len(vocabulary)]]))
 
-    # print(vocabulary)
-    # print(html_token_set)
-    print("----------------------------------------------")
+    #    print("----------------------------------------------")
 
 
 def process_examples(data_dir):
@@ -58,10 +54,14 @@ def process_examples(data_dir):
 
     # read dev file
     files = os.listdir(data_dir)
+    i = 0
     for file in files:
         if "tar" in file:
             continue
-        print(file)
+        if not "test-00000" in file:
+            continue
+        i+=1
+        print(i, file)
         q_list, p_list, a_list, i_list, vocab, html_set = process_file(data_dir + file)
         question_list += q_list
         passage_list += p_list
@@ -71,7 +71,7 @@ def process_examples(data_dir):
         html_token_set.update(html_set)
 
         output(question_list, passage_list, answer_list, set(instance_list), vocabulary)
-        # break
+        break
 
     print("Files complite")
 
@@ -85,4 +85,3 @@ def process_examples(data_dir):
 
 data_dir = "/home/pinecone/Data/WikiReading/"
 process_examples(data_dir)
-

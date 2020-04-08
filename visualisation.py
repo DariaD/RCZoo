@@ -13,7 +13,7 @@ def plot_len(plot_name, data):
       ax1.set_title(plot_name,)
       to_plot = []
       for x in data:
-          if "-" == x:
+          if "-" in str(x):
              continue
           to_plot.append(float(x))
       print(to_plot)
@@ -29,9 +29,9 @@ def plot_vocabulary(plot_name, data):
       to_plot = []
       for x in data:
           if len(x.strip()) > 0:
-                to_plot.append(int(x))
+                to_plot.append(int(x.strip()))
       print(to_plot)
-      ax1.boxplot(to_plot)
+      ax1.boxplot(data)
       plt.savefig('pic/{}.png'.format("_".join(plot_name.split())))
       plt.show()
 
