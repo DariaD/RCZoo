@@ -28,6 +28,8 @@ import gzip
 #
 
 
-text = "( @entity1 ) president @entity0 never lost his ardor for the @entity3 to remain united during the @entity4 . in his second inaugural address he attempted to salve the nation with an eloquent summation of his philosophy and plans for putting it into practice .  with malice toward none , with charity for all , with firmness in the right as @entity17 gives us to see the right"
-text = text.replace("@entity1", "CNN")
+text = "Feb 16, 2010 ... It was available but certainly not as omnipresent as in the States, its lack of ... \nFrom humble beginnings as a California hamburger stand to a billion-dollar ... \nRay Kroc was 52 years old when he first met the McDonald brothers. ... Ray Kroc \nopened his first McDonald's franchise location in 1955 in Des Plaines... Lawrence Page  reputed to be worth a staggering $17.5bn  at 37 years old, ... \nFord did not invent the automobile, but he developed and manufactured the first \n... He and his brother Roy co-founded Walt Disney Productions, which became \none ... Kroc first became involved with McDonald's, a restaurant chain based in \nSan... 31 External Link; 32 I want to change chicken to chickenburger; 33 Spelling error \nin .... I'm not a huge fan either, but this article demeans Wikipedia by allowing our \nbiases ..... Ray kroc was a 52 year-old Multimixer milkshake machine salesman \nwhen he .... 1955- Ray Kroc opened his first franchise, though there were several\n...No fast food chains existed, and neither did hamburgers, hot dogs, pizza, ..... He \nbegan franchising his operation in 1955. ... Ray Kroc bought out the McDonald \nbrothers' hamburger franchise company and ... 1972 Al Copeland opened a fast \nfood (chicken and biscuits) restaurant called Popeyes in New Orleans, Louisiana."
+print(text)
+print("_____________________________________")
+text = text.replace("\n", "").replace("...", "").replace("....", "").replace(".....", "").replace("......", "")
 print(text)

@@ -27,6 +27,86 @@ class SearchQAProcessor(DataProcessor):
         passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
         instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
 
+        print(len(passage_list), passage_list)
+        print(len(passage_list))
+        print(len(question_list), question_list)
+        print(len(answer_list), answer_list)
+        print(len(instance_list), instance_list)
+
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "answers": answer_list}
+
+    def _read_questions_examples(self, folder, sub_set):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        question_list, passage_list, answer_list, instance_list = [], [], [], []
+
+        files = os.listdir(os.path.join(folder, sub_set))
+        for file in files:
+            input_file = os.path.join(folder, sub_set, file)
+
+            with open(input_file, "r", encoding='utf-8') as reader:
+                entry = json.load(reader)
+
+                instance = entry["category"]
+                instance_list.append(instance)
+                search_results = entry["search_results"]
+                for s_result in search_results:
+                    if s_result["snippet"]:
+                        passage = s_result["snippet"]
+                        passage = passage.replace("\n", "")
+                        #passage.replace("...", "").replace("....", "").replace(".....", "").replace("......", "")
+
+                        passage_list.append(passage)
+
+
+                question = entry["question"]
+                question_list.append(question)
+                answer = entry["answer"]
+                answer_list.append(answer)
+
+                # example = RCExample(
+                #     guid="",
+                #     passage=passage_list,
+                #     question=question,
+                #     answer=answer,
+                #     instance=instance
+                # )
+                # examples.append(example)
+                # print(example)
+            #break
+
+        return {"examples": examples,
+                "questions": question_list,
+                "passages": passage_list,
+                "instances": instance_list,
+                "candidates": [],
+                "answers": answer_list}
+
+
+
+class SearchQAProcessor(DataProcessor):
+
+
+    def get_all_examples(self, data_dir):
+        train_data = self._read_questions_examples(data_dir, "train")
+        print("Finished train...")
+        dev_data   = self._read_questions_examples(data_dir,  "val")
+        print("Finished dev...")
+        test_data  = self._read_questions_examples(data_dir,  "test")
+        print("Finished eval...")
+
+        examples = train_data["examples"] + dev_data["examples"] + test_data["examples"]
+
+        question_list = train_data["questions"] + dev_data["questions"] + test_data["questions"]
+        answer_list   = train_data["answers"]   + dev_data["answers"]   + test_data["answers"]
+        passage_list  = train_data["passages"]  + dev_data["passages"]  + test_data["passages"]
+        instance_list = set(train_data["instances"] + dev_data["instances"] + test_data["instances"])
+
 #        print(len(passage_list), passage_list)
 #         print(len(passage_list))
 #         print(len(question_list), question_list)
@@ -1645,5 +1725,6 @@ processors = {
     "msmarco": MsMarcoProcessor,
     "newsqa": NewsQAProcessor,
     "searchqa": SearchQAProcessor,
+    #"wikireading": WikiReadingProcessor,
 }
 

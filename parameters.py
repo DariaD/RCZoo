@@ -27,6 +27,7 @@ datapaths = {
     "msmarco": "/home/pinecone/Data/MSMARCO/",
     "newsqa": "/home/pinecone/Data/NewsQA/",
     "searchqa": "/home/pinecone/Data/SearchQA/data_json/",
+    # "wikireading": "/home/pinecone/Data/WikiReading/",
 
 
 
