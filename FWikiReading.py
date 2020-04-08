@@ -30,6 +30,7 @@ def process_file(filename):
                 tokens = tokenizer(text_to_tokenize)
                 vocabulary.update({x.lemma_.lower() for x in tokens})
             except JSONDecodeError:
+                print("Error in data happen... ")
                 error_file = open("FwikiError.txt", "a")
                 error_file.write(data)
                 error_file.close()
@@ -65,8 +66,8 @@ def process_examples(data_dir):
     for file in files:
         if "tar" in file:
             continue
-        if not "test-00000" in file:
-            continue
+        # if not "test-00000" in file:
+        #     continue
         i+=1
         print(i, file)
         q_list, p_list, a_list, i_list, vocab, html_set = process_file(data_dir + file)
@@ -78,7 +79,7 @@ def process_examples(data_dir):
         html_token_set.update(html_set)
 
         output(question_list, passage_list, answer_list, set(instance_list), vocabulary)
-        break
+        # break
 
     print("Files complite")
 
