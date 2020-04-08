@@ -1,5 +1,6 @@
 import json
 import os
+from json import JSONDecodeError
 
 from spacy.lang.en import English
 
@@ -12,21 +13,26 @@ def process_file(filename):
     with open(filename, "r", encoding="utf-8") as reader:
         question_list, passage_list, answer_list, instance_list = [], [], [], []
         for i, data in enumerate(reader):
-            print(data)
-            entry = json.loads(data)
-            passage_tokens = entry["string_sequence"]
-            question_tokens = entry["question_string_sequence"]
+            #print(data)
+            try:
+                entry = json.loads(data)
+                passage_tokens = entry["string_sequence"]
+                question_tokens = entry["question_string_sequence"]
 
-            question_list.append(len(question_tokens))
-            passage_list.append(len(passage_tokens))
-            instance_list.append(entry["key"])
+                question_list.append(len(question_tokens))
+                passage_list.append(len(passage_tokens))
+                instance_list.append(entry["key"])
 
-            answer_tokens = entry["answer_string_sequence"]
-            answer_list.append(len(answer_tokens))
+                answer_tokens = entry["answer_string_sequence"]
+                answer_list.append(len(answer_tokens))
 
-            text_to_tokenize = " ".join(passage_tokens + question_tokens + answer_tokens)
-            tokens = tokenizer(text_to_tokenize)
-            vocabulary.update({x.lemma_.lower() for x in tokens})
+                text_to_tokenize = " ".join(passage_tokens + question_tokens + answer_tokens)
+                tokens = tokenizer(text_to_tokenize)
+                vocabulary.update({x.lemma_.lower() for x in tokens})
+            except JSONDecodeError:
+                error_file = open("FwikiError.txt", "a")
+                error_file.write(data)
+                error_file.close()
             # break
 
     return question_list, passage_list, answer_list, instance_list, vocabulary, html_token_set
