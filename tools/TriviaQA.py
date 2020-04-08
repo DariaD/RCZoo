@@ -52,7 +52,7 @@ def process_all_data(data_dir, web_dir, wiki_dir):
         vocabulary.update(vocab)
 
         output(question_list, passage_list, answer_list, set(instance_list), vocabulary)
-        break
+        #break
 
 
     print("writing vocabulary...")
@@ -162,7 +162,7 @@ def process_file(qa_json_file, web_dir, wikipedia_dir):
         question_list.append(len(question_tokens))
         passage_list.append(len(passage_tokens))
 
-        break
+        #break
 
     return question_list, passage_list, answer_list, instance_list, vocabulary
 
