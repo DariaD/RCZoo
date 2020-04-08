@@ -36,7 +36,6 @@ def output(question_list, passage_list, answer_list, instance_list, vocabulary):
 def process_all_data(data_dir, web_dir, wiki_dir):
     question_list, passage_list, answer_list, instance_list = [], [], [], []
     vocabulary = set()
-    html_token_set = set()
 
     # read dev file
 
@@ -148,18 +147,21 @@ def process_file(qa_json_file, web_dir, wikipedia_dir):
         question = qad['Question']
         question_tokens = tokenizer(question)
 
-        answer_tokens = []
+        answer_tokens_list = []
         if "without-answer" not in qa_json_file:
-            answer = qad['Answer']
-            answer_tokens = tokenizer(answer)
+            answer_aliases = qad['Answer']['NormalizedAliases']
+            for answer in answer_aliases:
+                answer_tokens = tokenizer(answer)
+                vocabulary.update({x.lemma_.lower() for x in answer_tokens})
+                answer_tokens_list.append(len(answer_tokens))
+            answer_list += answer_tokens_list
 
         vocabulary.update({x.lemma_.lower() for x in passage_tokens})
         vocabulary.update({x.lemma_.lower() for x in question_tokens})
-        vocabulary.update({x.lemma_.lower() for x in answer_tokens})
 
         question_list.append(len(question_tokens))
         passage_list.append(len(passage_tokens))
-        answer_list.append(len(answer_tokens))
+
         break
 
     return question_list, passage_list, answer_list, instance_list, vocabulary
