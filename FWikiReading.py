@@ -12,6 +12,7 @@ def process_file(filename):
     with open(filename, "r", encoding="utf-8") as reader:
         question_list, passage_list, answer_list, instance_list = [], [], [], []
         for i, data in enumerate(reader):
+            print(data)
             entry = json.loads(data)
             passage_tokens = entry["string_sequence"]
             question_tokens = entry["question_string_sequence"]
