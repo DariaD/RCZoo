@@ -36,3 +36,22 @@ Your Pages site will use the layout and styles from the Jekyll theme you have se
 
 Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
 -->
+
+Attention: 
+
+This project contains the code to process a number of datasets but does does not contains the datasets itselfs. 
+To proceede with the processing, you should download a dataset yourself and set up paths in parameters.py
+
+
+##Get Started
+
+###Step 1: Preparation
+ Get ready your python enviroment, create a new one if you need (recommended).
+ 
+ Download or get ready a dataset for processing.
+ 
+###Step 2
+ Set up your paths in the parameters.py file.
+ 
+ To do so you need to specify the following:  
+     
