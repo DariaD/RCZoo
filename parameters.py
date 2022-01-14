@@ -1,12 +1,15 @@
-# Data paths
-# Update Jan 2022
+# File to set up dataset names and main paths.
+# Update: Jan 2022
+# Author: Daria D.
 
-folder = "/home/pinecone/Data/"
-the_folder = "/home/pinecone/spinning-storage/pinecone/Data/RC_Zoo/"
 
-#folder = "/home/pinecone/spinning-storage/pinecone/Data/RC_Zoo/"
-#the_folder = "/home/pinecone/Data/"
-save_data_path = "/home/pinecone/Data/RC_Zoo_ANALYSIS/"
+#TODO:
+# Set up your path to the datasets and where put the results.
+
+data_folder = ""
+result_folder = data_folder + "_RC_ZOO_RESULT"
+
+save_data_path = ""
 
 
 
@@ -144,71 +147,71 @@ dataset_names = {
 
 }
 datapaths = {
-    "boolq":        folder + "BoolQ/",
-    "pubmedqa":     folder + "PubMedQA/",
-    "squad":        folder + "SQuAD/v1.1/",
-    "squad2.0":     folder + "SQuAD/v2.0/",
-    "wikimovies":   folder + "WikiMovies/movieqa/",
-    "narrativeqa":  folder + "narrativeqa-master/",
-    "sharc":        folder + "sharc1-official/json/",
-    "turkqa":       folder + "turkqa/",
-    "hotpotqa":     folder + "HotPotQA",
-    "medhop":       folder + "qangaroo_v1.1/medhop/",
-    "wikihop":      folder + "qangaroo_v1.1/wikihop/",
-    "recipeqa":     folder + "RecipeQA/",
-    "quasars":      folder + "quasar/quasar-s/",
-    "quasart":      folder + "quasar/quasar-t/",
-    "amazonqa":     folder + "AmazonQA/",
-    "duorc":        folder + "duorc-master/dataset/",
-    "drop":         folder + "drop_dataset/",
-    "clicr":        folder + "Clicr/",
-    "wdw":          folder + "WhoDidWhat/wdw_script/keys",
-    "cnn":          folder + "CNNDailyMail/cnn",
-    "dailymail":    folder + "CNNDailyMail/dailymail",
-    "msmarco":      folder + "MSMARCO/",
-    "newsqa":       folder + "NewsQA/",
-    "searchqa":     folder + "SearchQA/data_json/",
-    "tydi":         folder + "TyDi/",
+    "boolq": data_folder + "BoolQ/",
+    "pubmedqa": data_folder + "PubMedQA/",
+    "squad": data_folder + "SQuAD/v1.1/",
+    "squad2.0": data_folder + "SQuAD/v2.0/",
+    "wikimovies": data_folder + "WikiMovies/movieqa/",
+    "narrativeqa": data_folder + "narrativeqa-master/",
+    "sharc": data_folder + "sharc1-official/json/",
+    "turkqa": data_folder + "turkqa/",
+    "hotpotqa": data_folder + "HotPotQA",
+    "medhop": data_folder + "qangaroo_v1.1/medhop/",
+    "wikihop": data_folder + "qangaroo_v1.1/wikihop/",
+    "recipeqa": data_folder + "RecipeQA/",
+    "quasars": data_folder + "quasar/quasar-s/",
+    "quasart": data_folder + "quasar/quasar-t/",
+    "amazonqa": data_folder + "AmazonQA/",
+    "duorc": data_folder + "duorc-master/dataset/",
+    "drop": data_folder + "drop_dataset/",
+    "clicr": data_folder + "Clicr/",
+    "wdw": data_folder + "WhoDidWhat/wdw_script/keys",
+    "cnn": data_folder + "CNNDailyMail/cnn",
+    "dailymail": data_folder + "CNNDailyMail/dailymail",
+    "msmarco": data_folder + "MSMARCO/",
+    "newsqa": data_folder + "NewsQA/",
+    "searchqa": data_folder + "SearchQA/data_json/",
+    "tydi": data_folder + "TyDi/",
 
 
-    "quac":         folder + "QuAC/",
-    "coqa":         folder + "CoQA/",
-    "multirc":      folder + "MultiRC",
-    "cosmosqa":     folder + "cosmosqa-master/data/",
-    "movieqa":      folder + "Movies/MovieQA/MovieQA_benchmark/",
-    "mcscript":     folder + "MCScript/",
-    "mcscript2.0":  folder + "MCScript/v2.0/",
-    "amazonyesno":  folder + "AmazonYesNo",
-    "babi":         folder + "bAbI/tasks_1-20_v1-2/en/",
+    "quac": data_folder + "QuAC/",
+    "coqa": data_folder + "CoQA/",
+    "multirc": data_folder + "MultiRC",
+    "cosmosqa": data_folder + "cosmosqa-master/data/",
+    "movieqa": data_folder + "Movies/MovieQA/MovieQA_benchmark/",
+    "mcscript": data_folder + "MCScript/",
+    "mcscript2.0": data_folder + "MCScript/v2.0/",
+    "amazonyesno": data_folder + "AmazonYesNo",
+    "babi": data_folder + "bAbI/tasks_1-20_v1-2/en/",
 
-    "mctest160":    folder + "MCTest/160",
-    "mctest500":    folder + "MCTest/500",
-    "emrqa":        folder + "emrQA/n2c2-community-annotations_2014-pampari-question-answering/dataset",
+    "mctest160": data_folder + "MCTest/160",
+    "mctest500": data_folder + "MCTest/500",
+    "emrqa": data_folder + "emrQA/n2c2-community-annotations_2014-pampari-question-answering/dataset",
 
-    "dream":    folder + "DREAM",
-    "reclor":   folder + "ReClor",
-    "cbt":      folder + "CBTest/data",
-    "race":     folder + "RACE/RACE",
-    "racec":    folder + "RACE-C/data",
-    "triviaqa": folder + "TriviaQA",
-    "sciq":     folder + "SciQ",
-    "record":   folder + "ReCoRD",
-    "tweetqa":  folder + "TweetQA/TweetQA_data",
-    "quail":    folder + "QuAIL/quail-master/quail_v1.2/json/",
+    "dream": data_folder + "DREAM",
+    "reclor": data_folder + "ReClor",
+    "cbt": data_folder + "CBTest/data",
+    "race": data_folder + "RACE/RACE",
+    "racec": data_folder + "RACE-C/data",
+    "triviaqa": data_folder + "TriviaQA",
+    "sciq": data_folder + "SciQ",
+    "record": data_folder + "ReCoRD",
+    "tweetqa": data_folder + "TweetQA/TweetQA_data",
+    "quail": data_folder + "QuAIL/quail-master/quail_v1.2/json/",
 
-    "naturalquestions": folder + "NaturalQuestions/v1.0/v1.0/",
-    "wikiqa":           folder + "WikiQACorpus/",
-    "wikireading":      folder + "WikiReading/",
-    "lambada":          folder + "LAMBADA",
+    "naturalquestions": data_folder + "NaturalQuestions/v1.0/v1.0/",
+    "wikiqa": data_folder + "WikiQACorpus/",
+    "wikireading": data_folder + "WikiReading/",
+    "lambada": data_folder + "LAMBADA",
 
 
     # The newest
-    "arc":  folder + "ARC-V1-Feb2018-2",
-    "bipar":  folder + "BiPaR/Monolingual/EN",
-    "openbookqa":  folder + "OpenBookQA-V1-Sep2018/Data/Additional",
-    "qasc":  folder + "QASC_Corpus",
-    "subjqa": folder + "SubjQA/SubjQA",
-    "iirc": folder + "iirc_train_dev",
+    "arc": data_folder + "ARC-V1-Feb2018-2",
+    "bipar": data_folder + "BiPaR/Monolingual/EN",
+    "openbookqa": data_folder + "OpenBookQA-V1-Sep2018/Data/Additional",
+    "qasc": data_folder + "QASC_Corpus",
+    "subjqa": data_folder + "SubjQA/SubjQA",
+    "iirc": data_folder + "iirc_train_dev",
 
 
 
