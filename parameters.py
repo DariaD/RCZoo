@@ -5,11 +5,10 @@
 
 #TODO:
 # Set up your path to the datasets and where put the results.
-
-data_folder = ""
+data_folder = "/home/pinecone/Data/"
 result_folder = data_folder + "_RC_ZOO_RESULT"
 
-save_data_path = ""
+save_data_path = "/home/pinecone/Data/RC_Zoo_ANALYSIS/"
 
 
 
