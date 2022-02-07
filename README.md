@@ -42,7 +42,7 @@ Having trouble with Pages? Check out our [documentation](https://docs.github.com
 
 ## Citation
 
-If you find an information on this page usefull or use any code from this repository, please cite our  paper [English Machine Reading Comprehension Datasets: A Survey](https://aclanthology.org/2021.emnlp-main.693/):
+If you find an information on this page useful or use any code from this repository, please cite our  paper [English Machine Reading Comprehension Datasets: A Survey](https://aclanthology.org/2021.emnlp-main.693/):
 
 ```
 @inproceedings{dzendzik-etal-2021-english,
